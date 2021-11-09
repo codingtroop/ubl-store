@@ -14,7 +14,7 @@ func main() {
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hellosses, World!")
+		return c.String(http.StatusOK, "Hellossses, World!")
 	})
 	e.Logger.Fatal(e.Start(":1323"))
 }
