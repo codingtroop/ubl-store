@@ -9,12 +9,13 @@
             "type":"go",
             "request": "launch",
             "mode": "debug",
+            "preLaunchTask": "swagger",
             "cwd":"${workspaceFolder}",
             "program": "./main.go",
             "serverReadyAction":{
                 "action": "openExternally",
                 "pattern": "http server started on \\[::\\]:([0-9]+)",
-                "uriFormat": "http://localhost:%s"
+                "uriFormat": "http://localhost:%s/swagger/index.html"
             }
         }
     ]

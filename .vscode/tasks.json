@@ -1,0 +1,20 @@
+{
+    "version":"2.0.0",
+    "tasks": [
+        {
+            "label": "swagger",
+            "type": "process",
+            "command":"swag",
+            "osx":{
+                "options":{
+                    "env":{"PATH":"${env:HOME}/go/bin" }
+                }
+            },
+            "args": [
+                {"value": "init", "quoting": "escape"},
+                {"value": "-g", "quoting": "escape"},
+                {"value": "./main.go", "quoting": "escape"}
+            ]
+        }
+    ]
+}
