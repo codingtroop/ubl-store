@@ -10,7 +10,8 @@ RUN go mod download
 
 COPY . ./
 
-RUN go build -o /ubl-store github.com/codingtroop/ubl-store
+RUN swag init -g ./main.go \
+    && go build -o /ubl-store github.com/codingtroop/ubl-store
 
 
 FROM alpine:3.14
