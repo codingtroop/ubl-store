@@ -1,0 +1,23 @@
+FROM golang:1.17-alpine as build
+
+WORKDIR /app
+
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+
+COPY go.mod go.sum ./
+
+RUN go mod download
+
+COPY . ./
+
+RUN go build -o /ubl-store github.com/codingtroop/ubl-store
+
+
+FROM alpine:3.14
+
+WORKDIR /app
+COPY --from=build /ubl-store .
+
+EXPOSE 80
+
+CMD ["./ubl-store"]
