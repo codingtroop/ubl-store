@@ -20,9 +20,9 @@ func NewSqliteAttanchmentRepository(db *sql.DB) interfaces.AttachmentRepository 
 }
 
 func (r *sqliteAttachmentRepository) Get(cntxt context.Context, id uuid.UUID) (*entities.AttachmentEntity, error) {
-	sql := "SELECT * FROM attachment where ID = ?"
+	q := "SELECT * FROM attachment where ID = ?"
 
-	ps, err := r.db.Prepare(sql)
+	ps, err := r.db.Prepare(q)
 
 	if err != nil {
 		return nil, err
@@ -37,6 +37,11 @@ func (r *sqliteAttachmentRepository) Get(cntxt context.Context, id uuid.UUID) (*
 	entity := entities.AttachmentEntity{}
 
 	if err := qs.Scan(entity); err != nil {
+
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 
@@ -44,9 +49,9 @@ func (r *sqliteAttachmentRepository) Get(cntxt context.Context, id uuid.UUID) (*
 }
 
 func (r *sqliteAttachmentRepository) Insert(cntxt context.Context, e entities.AttachmentEntity) error {
-	sql := "INSERT INTO attachment(ID, Created, UblID, Hash) VALUES(?, ?, ?, ?)"
+	q := "INSERT INTO attachment(ID, Created, UblID, Hash) VALUES(?, ?, ?, ?)"
 
-	ps, err := r.db.Prepare(sql)
+	ps, err := r.db.Prepare(q)
 
 	if err != nil {
 		return err
@@ -60,9 +65,9 @@ func (r *sqliteAttachmentRepository) Insert(cntxt context.Context, e entities.At
 }
 
 func (r *sqliteAttachmentRepository) Delete(cntxt context.Context, id uuid.UUID) error {
-	sql := "DELETE FROM attachment WHERE ID = ?"
+	q := "DELETE FROM attachment WHERE ID = ?"
 
-	ps, err := r.db.Prepare(sql)
+	ps, err := r.db.Prepare(q)
 
 	if err != nil {
 		return err

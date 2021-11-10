@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/codingtroop/ubl-store/pkg/entities"
 	handler "github.com/codingtroop/ubl-store/pkg/handlers/interfaces"
@@ -21,6 +20,14 @@ func NewUblStoreHandler(ur repo.UblRepository,
 	return &ublStoreHandler{ublRepo: ur, attachmentRepo: ar}
 }
 
+// Get godoc
+// @Summary Get ubl
+// @Tags Ubl
+// @Accept  json
+// @Produce  json
+// @Param id path string true "id"
+// @Success 200
+// @Router /api/v1/ubl/{id} [get]
 func (h *ublStoreHandler) Get(c echo.Context) error {
 
 	model := models.GetModel{}
@@ -34,16 +41,23 @@ func (h *ublStoreHandler) Get(c echo.Context) error {
 	ubl, err := h.ublRepo.Get(context, model.ID)
 
 	if err != nil {
-		if strings.Contains(err.Error(), "no rows") {
-			return c.NoContent(http.StatusNotFound)
-		}
-
 		return err
+	}
+
+	if ubl == nil {
+		return c.NoContent(http.StatusNotFound)
 	}
 
 	return c.JSON(http.StatusOK, ubl)
 }
 
+// Post godoc
+// @Summary Post ubl
+// @Tags Ubl
+// @Accept  json
+// @Produce  json
+// @Success 200
+// @Router /api/v1/ubl [post]
 func (h *ublStoreHandler) Post(c echo.Context) error {
 
 	model := models.PostModel{}
@@ -63,6 +77,14 @@ func (h *ublStoreHandler) Post(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
+// Delete godoc
+// @Summary Delete ubl
+// @Tags Ubl
+// @Accept  json
+// @Produce  json
+// @Param id path string true "id"
+// @Success 200
+// @Router /api/v1/ubl/{id} [delete]
 func (h *ublStoreHandler) Delete(c echo.Context) error {
 
 	model := models.DeleteModel{}

@@ -18,9 +18,9 @@ func NewSqliteUblRepository(db *sql.DB) interfaces.UblRepository {
 }
 
 func (r *sqliteUblRepository) Get(cntxt context.Context, id uuid.UUID) (*entities.UblEntity, error) {
-	sql := "SELECT * FROM ubl where ID = ?"
+	q := "SELECT * FROM ubl where ID = ?"
 
-	ps, err := r.db.Prepare(sql)
+	ps, err := r.db.Prepare(q)
 
 	if err != nil {
 		return nil, err
@@ -35,6 +35,11 @@ func (r *sqliteUblRepository) Get(cntxt context.Context, id uuid.UUID) (*entitie
 	entity := entities.UblEntity{}
 
 	if err := qs.Scan(entity); err != nil {
+
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 
@@ -42,9 +47,9 @@ func (r *sqliteUblRepository) Get(cntxt context.Context, id uuid.UUID) (*entitie
 }
 
 func (r *sqliteUblRepository) Insert(cntxt context.Context, e entities.UblEntity) error {
-	sql := "INSERT INTO ubl(ID, Created) VALUES(?, ?, ?, ?)"
+	q := "INSERT INTO ubl(ID, Created) VALUES(?, ?, ?, ?)"
 
-	ps, err := r.db.Prepare(sql)
+	ps, err := r.db.Prepare(q)
 
 	if err != nil {
 		return err
@@ -58,9 +63,9 @@ func (r *sqliteUblRepository) Insert(cntxt context.Context, e entities.UblEntity
 }
 
 func (r *sqliteUblRepository) Delete(cntxt context.Context, id uuid.UUID) error {
-	sql := "DELETE FROM ubl WHERE ID = ?"
+	q := "DELETE FROM ubl WHERE ID = ?"
 
-	ps, err := r.db.Prepare(sql)
+	ps, err := r.db.Prepare(q)
 
 	if err != nil {
 		return err

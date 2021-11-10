@@ -75,9 +75,11 @@ func main() {
 	e.GET("/health/live", hc.Live)
 	e.GET("/health/ready", hc.Ready)
 
-	e.GET("/ubl", uh.Get)
-	e.POST("/ubl", uh.Post)
-	e.DELETE("/ubl", uh.Delete)
+	ug := e.Group("/api/v1/ubl")
+
+	ug.GET("", uh.Get)
+	ug.POST("", uh.Post)
+	ug.DELETE("", uh.Delete)
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World haha oldu!")

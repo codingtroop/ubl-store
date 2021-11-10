@@ -1,4 +1,51 @@
 info:
   contact: {}
-paths: {}
+paths:
+  /api/v1/ubl:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Post ubl
+      tags:
+      - Ubl
+  /api/v1/ubl/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Delete ubl
+      tags:
+      - Ubl
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Get ubl
+      tags:
+      - Ubl
 swagger: "2.0"
