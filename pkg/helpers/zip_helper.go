@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"context"
+	"errors"
 	"io/ioutil"
 
 	"github.com/codingtroop/ubl-store/pkg/helpers/interfaces"
@@ -25,20 +26,18 @@ func readZipFile(zf *zip.File) ([]byte, error) {
 	return ioutil.ReadAll(f)
 }
 
-func (h *zipHelper) Zip(c context.Context, data map[string][]byte) ([]byte, error) {
+func (h *zipHelper) Zip(c context.Context, fileName string, data []byte) ([]byte, error) {
 	buf := new(bytes.Buffer)
 
 	zw := zip.NewWriter(buf)
 
-	for f, d := range data {
-		zf, err := zw.Create(f)
-		if err != nil {
-			return nil, err
-		}
-		_, err = zf.Write([]byte(d))
-		if err != nil {
-			return nil, err
-		}
+	zf, err := zw.Create(fileName)
+	if err != nil {
+		return nil, err
+	}
+	_, err = zf.Write([]byte(data))
+	if err != nil {
+		return nil, err
 	}
 
 	if err := zw.Close(); err != nil {
@@ -48,21 +47,24 @@ func (h *zipHelper) Zip(c context.Context, data map[string][]byte) ([]byte, erro
 	return buf.Bytes(), nil
 }
 
-func (h *zipHelper) Unzip(c context.Context, data []byte) (map[string][]byte, error) {
-	files := map[string][]byte{}
+func (h *zipHelper) Unzip(c context.Context, data []byte) (string, []byte, error) {
+
 	zr, err := zip.NewReader(bytes.NewReader(data), int64(len(data)))
 
 	if err != nil {
-		return nil, err
+		return "", nil, err
 	}
 
-	for _, z := range zr.File {
-		d, err := readZipFile(z)
-		if err != nil {
-			return nil, err
-		}
-
-		files[z.Name] = d
+	if len(zr.File) == 0 {
+		return "", nil, errors.New("no entry")
 	}
-	return files, nil
+
+	z := zr.File[0]
+
+	d, err := readZipFile(z)
+	if err != nil {
+		return "", nil, err
+	}
+
+	return z.Name, d, nil
 }
