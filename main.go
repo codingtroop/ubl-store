@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"net/http"
 
 	_ "github.com/codingtroop/ubl-store/docs"
 	api "github.com/codingtroop/ubl-store/pkg/handlers"
@@ -50,10 +49,6 @@ func main() {
 	ug.GET("/:id", uh.Get)
 	ug.POST("", uh.Post)
 	ug.DELETE("/:id", uh.Delete)
-
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World haha oldu!")
-	})
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
