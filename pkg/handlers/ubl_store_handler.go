@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/codingtroop/ubl-store/pkg/entities"
 	handler "github.com/codingtroop/ubl-store/pkg/handlers/interfaces"
@@ -33,6 +34,10 @@ func (h *ublStoreHandler) Get(c echo.Context) error {
 	ubl, err := h.ublRepo.Get(context, model.ID)
 
 	if err != nil {
+		if strings.Contains(err.Error(), "no rows") {
+			return c.NoContent(http.StatusNotFound)
+		}
+
 		return err
 	}
 
