@@ -12,11 +12,11 @@ import (
 func main() {
 	e := echo.New()
 
-	healthCheckHandler := api.NewHealthCheckHandler()
+	hc := api.NewHealthCheckHandler()
 
-	e.GET("/health", healthCheckHandler.Live)
-	e.GET("/health/live", healthCheckHandler.Live)
-	e.GET("/health/ready", healthCheckHandler.Ready)
+	e.GET("/health", hc.Live)
+	e.GET("/health/live", hc.Live)
+	e.GET("/health/ready", hc.Ready)
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World haha oldu!")
