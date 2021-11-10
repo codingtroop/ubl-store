@@ -38,7 +38,7 @@ func main() {
 	as := helpers.NewIOStorer("attachments")
 	c := helpers.NewGZip()
 
-	uh := api.NewUblStoreHandler(ur, ar, as, us, c)
+	uh := api.NewUblStoreHandler(ur, ar, us, as, c)
 
 	e.GET("/health", hc.Live)
 	e.GET("/health/live", hc.Live)

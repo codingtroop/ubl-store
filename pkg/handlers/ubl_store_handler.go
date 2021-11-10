@@ -59,7 +59,23 @@ func (h *ublStoreHandler) Get(c echo.Context) error {
 		return c.NoContent(http.StatusNotFound)
 	}
 
-	return c.JSON(http.StatusOK, ubl)
+	zipData, err := h.ublStore.Read(context, id)
+
+	if err != nil {
+		return err
+	}
+
+	if zipData == nil {
+		return c.NoContent(http.StatusNotFound)
+	}
+
+	data, err := h.compressor.Decompress(context, zipData)
+
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, &models.UblModel{Data: data})
 }
 
 // Post godoc
