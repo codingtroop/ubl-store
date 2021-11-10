@@ -1,3 +1,9 @@
+definitions:
+  models.PostModel:
+    properties:
+      data:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
@@ -5,6 +11,13 @@ paths:
     post:
       consumes:
       - application/json
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.PostModel'
       produces:
       - application/json
       responses:

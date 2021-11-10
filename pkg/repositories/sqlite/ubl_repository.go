@@ -34,7 +34,7 @@ func (r *sqliteUblRepository) Get(cntxt context.Context, id uuid.UUID) (*entitie
 
 	entity := entities.UblEntity{}
 
-	if err := qs.Scan(entity); err != nil {
+	if err := qs.Scan(&entity.ID, &entity.Created); err != nil {
 
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -47,7 +47,7 @@ func (r *sqliteUblRepository) Get(cntxt context.Context, id uuid.UUID) (*entitie
 }
 
 func (r *sqliteUblRepository) Insert(cntxt context.Context, e entities.UblEntity) error {
-	q := "INSERT INTO ubl(ID, Created) VALUES(?, ?, ?, ?)"
+	q := "INSERT INTO ubl(ID, Created) VALUES(?, ?)"
 
 	ps, err := r.db.Prepare(q)
 

@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/codingtroop/ubl-store/docs"
 	api "github.com/codingtroop/ubl-store/pkg/handlers"
+	"github.com/codingtroop/ubl-store/pkg/helpers"
 	"github.com/codingtroop/ubl-store/pkg/repositories/sqlite"
 	"github.com/labstack/echo/v4"
 	_ "github.com/mattn/go-sqlite3" // Import go-sqlite3 library
@@ -18,7 +19,7 @@ import (
 func createTable(db *sql.DB) {
 	ublSql := `create table if not exists ubl (
 		"ID" GUID,		
-		"Created" TEXT
+		"Created" datetime
 	  );`
 
 	us, err := db.Prepare(ublSql)
@@ -29,7 +30,7 @@ func createTable(db *sql.DB) {
 
 	aSql := `create table if not exists attachment (
 		"ID" GUID,		
-		"Created" TEXT,
+		"Created" datetime,
 		"UblID" GUID,
 		"Hash" TEXT
 	  );`
@@ -69,7 +70,11 @@ func main() {
 	ur := sqlite.NewSqliteUblRepository(db)
 	ar := sqlite.NewSqliteAttanchmentRepository(db)
 
-	uh := api.NewUblStoreHandler(ur, ar)
+	us := helpers.NewIOStorer("ubls")
+	as := helpers.NewIOStorer("attachments")
+	c := helpers.NewGZip()
+
+	uh := api.NewUblStoreHandler(ur, ar, as, us, c)
 
 	e.GET("/health", hc.Live)
 	e.GET("/health/live", hc.Live)
@@ -77,9 +82,9 @@ func main() {
 
 	ug := e.Group("/api/v1/ubl")
 
-	ug.GET("", uh.Get)
+	ug.GET("/:id", uh.Get)
 	ug.POST("", uh.Post)
-	ug.DELETE("", uh.Delete)
+	ug.DELETE("/:id", uh.Delete)
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World haha oldu!")

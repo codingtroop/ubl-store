@@ -36,7 +36,7 @@ func (r *sqliteAttachmentRepository) Get(cntxt context.Context, id uuid.UUID) (*
 
 	entity := entities.AttachmentEntity{}
 
-	if err := qs.Scan(entity); err != nil {
+	if err := qs.Scan(&entity.ID, &entity.Created, &entity.UblID, &entity.Hash); err != nil {
 
 		if err == sql.ErrNoRows {
 			return nil, nil

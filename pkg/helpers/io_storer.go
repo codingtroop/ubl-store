@@ -8,17 +8,16 @@ import (
 )
 
 type ioStorer struct {
+	folder string
 }
 
-var root = "var/ubl"
-
-func NewIOHelper() interfaces.Storer {
-	return &ioStorer{}
+func NewIOStorer(f string) interfaces.Storer {
+	return &ioStorer{folder: f}
 }
 func (h *ioStorer) Read(c context.Context, uuid string) ([]byte, error) {
-	return os.ReadFile(root + "/" + uuid)
+	return os.ReadFile(h.folder + "/" + uuid)
 }
 
 func (h *ioStorer) Write(c context.Context, uuid string, data []byte) error {
-	return os.WriteFile(root+"/"+uuid, data, 0644)
+	return os.WriteFile(h.folder+"/"+uuid, data, 0644)
 }

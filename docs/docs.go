@@ -35,6 +35,17 @@ var doc = `{
                     "Ubl"
                 ],
                 "summary": "Post ubl",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PostModel"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": ""
@@ -93,6 +104,16 @@ var doc = `{
                     "200": {
                         "description": ""
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.PostModel": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string"
                 }
             }
         }
