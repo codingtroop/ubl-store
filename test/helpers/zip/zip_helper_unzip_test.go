@@ -7,7 +7,7 @@ import (
 	"github.com/codingtroop/ubl-store/pkg/helpers"
 )
 
-func Test_UnZipOk(t *testing.T) {
+func Test_Zip_UnZip_Ok(t *testing.T) {
 	zh := helpers.NewZipHelper()
 
 	d, err := zh.Zip(context.TODO(), "test", []byte("test"))
