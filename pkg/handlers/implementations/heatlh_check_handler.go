@@ -3,13 +3,14 @@ package implementations
 import (
 	"net/http"
 
-	"github.com/labstack/echo"
+	"github.com/codingtroop/ubl-store/pkg/handlers/interfaces"
+	"github.com/labstack/echo/v4"
 )
 
 type healthCheckHandler struct {
 }
 
-func NewHealthCheckHandler() HealthCheckHandler {
+func NewHealthCheckHandler() interfaces.HealthCheckHandler {
 	return &healthCheckHandler{}
 }
 
