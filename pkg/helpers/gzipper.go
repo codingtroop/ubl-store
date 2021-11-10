@@ -33,23 +33,23 @@ func (h *gzipper) Compress(c context.Context, fileName string, data []byte) ([]b
 	return buf.Bytes(), nil
 }
 
-func (h *gzipper) Decompress(c context.Context, data []byte) (string, []byte, error) {
+func (h *gzipper) Decompress(c context.Context, data []byte) ([]byte, error) {
 	zr, err := gzip.NewReader(bytes.NewReader(data))
 
 	if err != nil {
-		return "", nil, err
+		return nil, err
 	}
 
 	d, err := ioutil.ReadAll(zr)
 
 	if err != nil {
-		return "", nil, err
+		return nil, err
 	}
 
 	if err := zr.Close(); err != nil {
-		return "", nil, err
+		return nil, err
 	}
 
-	return zr.Name, d, nil
+	return d, nil
 
 }
