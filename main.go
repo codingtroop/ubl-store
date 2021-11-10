@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	_ "github.com/codingtroop/ubl-store/docs"
-	api "github.com/codingtroop/ubl-store/pkg/handlers/implementations"
+	api "github.com/codingtroop/ubl-store/pkg/handlers"
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
