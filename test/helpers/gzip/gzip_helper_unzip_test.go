@@ -8,15 +8,15 @@ import (
 )
 
 func Test_GZip_UnZip_Ok(t *testing.T) {
-	zh := helpers.NewGZipHelper()
+	zh := helpers.NewGZip()
 
-	d, err := zh.Zip(context.TODO(), "test", []byte("test"))
+	d, err := zh.Compress(context.TODO(), "test", []byte("test"))
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if _, _, err := zh.Unzip(context.TODO(), d); err != nil {
+	if _, _, err := zh.Decompress(context.TODO(), d); err != nil {
 		t.Fatal(err)
 	}
 }

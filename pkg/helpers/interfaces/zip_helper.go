@@ -2,7 +2,7 @@ package interfaces
 
 import "context"
 
-type ZipHelper interface {
-	Zip(c context.Context, fileName string, data []byte) ([]byte, error)
-	Unzip(c context.Context, data []byte) (string, []byte, error)
+type Compressor interface {
+	Compress(c context.Context, fileName string, data []byte) ([]byte, error)
+	Decompress(c context.Context, data []byte) (string, []byte, error)
 }

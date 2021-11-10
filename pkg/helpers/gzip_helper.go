@@ -9,14 +9,14 @@ import (
 	"github.com/codingtroop/ubl-store/pkg/helpers/interfaces"
 )
 
-type gzipHelper struct {
+type gzipper struct {
 }
 
-func NewGZipHelper() interfaces.ZipHelper {
-	return &gzipHelper{}
+func NewGZip() interfaces.Compressor {
+	return &gzipper{}
 }
 
-func (h *gzipHelper) Zip(c context.Context, fileName string, data []byte) ([]byte, error) {
+func (h *gzipper) Compress(c context.Context, fileName string, data []byte) ([]byte, error) {
 	var buf bytes.Buffer
 	zw := gzip.NewWriter(&buf)
 
@@ -33,7 +33,7 @@ func (h *gzipHelper) Zip(c context.Context, fileName string, data []byte) ([]byt
 	return buf.Bytes(), nil
 }
 
-func (h *gzipHelper) Unzip(c context.Context, data []byte) (string, []byte, error) {
+func (h *gzipper) Decompress(c context.Context, data []byte) (string, []byte, error) {
 	zr, err := gzip.NewReader(bytes.NewReader(data))
 
 	if err != nil {

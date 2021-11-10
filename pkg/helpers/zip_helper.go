@@ -10,11 +10,11 @@ import (
 	"github.com/codingtroop/ubl-store/pkg/helpers/interfaces"
 )
 
-type zipHelper struct {
+type zipper struct {
 }
 
-func NewZipHelper() interfaces.ZipHelper {
-	return &zipHelper{}
+func NewZipper() interfaces.Compressor {
+	return &zipper{}
 }
 
 func readZipFile(zf *zip.File) ([]byte, error) {
@@ -26,7 +26,7 @@ func readZipFile(zf *zip.File) ([]byte, error) {
 	return ioutil.ReadAll(f)
 }
 
-func (h *zipHelper) Zip(c context.Context, fileName string, data []byte) ([]byte, error) {
+func (h *zipper) Compress(c context.Context, fileName string, data []byte) ([]byte, error) {
 	buf := new(bytes.Buffer)
 
 	zw := zip.NewWriter(buf)
@@ -47,7 +47,7 @@ func (h *zipHelper) Zip(c context.Context, fileName string, data []byte) ([]byte
 	return buf.Bytes(), nil
 }
 
-func (h *zipHelper) Unzip(c context.Context, data []byte) (string, []byte, error) {
+func (h *zipper) Decompress(c context.Context, data []byte) (string, []byte, error) {
 
 	zr, err := zip.NewReader(bytes.NewReader(data), int64(len(data)))
 

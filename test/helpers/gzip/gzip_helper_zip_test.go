@@ -8,9 +8,9 @@ import (
 )
 
 func Test_GZip_Zip_Ok(t *testing.T) {
-	zh := helpers.NewGZipHelper()
+	zh := helpers.NewGZip()
 
-	_, err := zh.Zip(context.TODO(), "test", []byte("test"))
+	_, err := zh.Compress(context.TODO(), "test", []byte("test"))
 
 	if err != nil {
 		t.Fatal(err)
