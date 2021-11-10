@@ -3,6 +3,6 @@ package interfaces
 import "context"
 
 type FileHelper interface {
-	Read(cntxt context.Context, path string) ([]byte, error)
-	Write(cntxt context.Context, path string, data []byte) error
+	Read(c context.Context, filePath string) ([]byte, error)
+	Write(c context.Context, filePath string, data []byte) error
 }
