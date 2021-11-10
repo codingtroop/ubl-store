@@ -47,24 +47,24 @@ func (h *zipper) Compress(c context.Context, fileName string, data []byte) ([]by
 	return buf.Bytes(), nil
 }
 
-func (h *zipper) Decompress(c context.Context, data []byte) (string, []byte, error) {
+func (h *zipper) Decompress(c context.Context, data []byte) ([]byte, error) {
 
 	zr, err := zip.NewReader(bytes.NewReader(data), int64(len(data)))
 
 	if err != nil {
-		return "", nil, err
+		return nil, err
 	}
 
 	if len(zr.File) == 0 {
-		return "", nil, errors.New("no entry")
+		return nil, errors.New("no entry")
 	}
 
 	z := zr.File[0]
 
 	d, err := readZipFile(z)
 	if err != nil {
-		return "", nil, err
+		return nil, err
 	}
 
-	return z.Name, d, nil
+	return d, nil
 }

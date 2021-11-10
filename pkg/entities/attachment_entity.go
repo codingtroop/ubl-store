@@ -6,7 +6,9 @@ import (
 	"github.com/google/uuid"
 )
 
-type UblEntity struct {
+type AttachmentEntity struct {
 	ID      uuid.UUID
 	Created time.Time
+	UblID   uuid.UUID
+	Hash    string
 }

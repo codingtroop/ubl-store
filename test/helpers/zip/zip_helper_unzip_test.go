@@ -16,7 +16,7 @@ func Test_Zip_UnZip_Ok(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, _, err := zh.Decompress(context.TODO(), d); err != nil {
+	if _, err := zh.Decompress(context.TODO(), d); err != nil {
 		t.Fatal(err)
 	}
 }
