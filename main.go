@@ -1,11 +1,8 @@
 package main
 
 import (
-	"database/sql"
-	"errors"
 	"log"
 	"net/http"
-	"os"
 
 	_ "github.com/codingtroop/ubl-store/docs"
 	api "github.com/codingtroop/ubl-store/pkg/handlers"
@@ -16,56 +13,24 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
-func createTable(db *sql.DB) {
-	ublSql := `create table if not exists ubl (
-		"ID" GUID,		
-		"Created" datetime
-	  );`
-
-	us, err := db.Prepare(ublSql)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	us.Exec()
-
-	aSql := `create table if not exists attachment (
-		"ID" GUID,		
-		"Created" datetime,
-		"UblID" GUID,
-		"Hash" TEXT
-	  );`
-
-	as, err := db.Prepare(aSql)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	as.Exec()
-}
-
 func main() {
 	e := echo.New()
 
 	hc := api.NewHealthCheckHandler()
 
-	dbPath := "sqlite-database.db"
+	dbPath := "./sqlite-database.db"
+	sqliteConnector := sqlite.NewSqliteConnector(dbPath)
+	db, err := sqliteConnector.Connect()
 
-	if _, err := os.Stat(dbPath); errors.Is(err, os.ErrNotExist) {
-
-		file, err := os.Create(dbPath)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-
-		file.Close()
-
-		log.Println("sqlite-database.db created")
+	if err != nil {
+		log.Fatal(err.Error())
 	}
 
-	db, _ := sql.Open("sqlite3", "./"+dbPath)
-
-	createTable(db)
-
 	defer db.Close()
+
+	if err := sqliteConnector.Init(db); err != nil {
+		log.Fatal(err.Error())
+	}
 
 	ur := sqlite.NewSqliteUblRepository(db)
 	ar := sqlite.NewSqliteAttanchmentRepository(db)
