@@ -9,7 +9,7 @@ import (
 type healthCheckHandler struct {
 }
 
-func NewHealthCheckHandler() HealthCheckHandlerInterface {
+func NewHealthCheckHandler() HealthCheckHandler {
 	return &healthCheckHandler{}
 }
 
