@@ -99,7 +99,7 @@ func (h *ublStoreHandler) Post(c echo.Context) error {
 		return err
 	}
 
-	uuidText, err := h.ubl.GetUUID(b)
+	ublText, uuidText, attach, err := h.ubl.ParseUbl(b)
 
 	if err != nil {
 		return err
@@ -115,7 +115,7 @@ func (h *ublStoreHandler) Post(c echo.Context) error {
 
 	context := c.Request().Context()
 
-	cBytes, err := h.compressor.Compress(context, uuidText, b)
+	cBytes, err := h.compressor.Compress(context, ublText, b)
 
 	if err != nil {
 		return err
@@ -127,6 +127,33 @@ func (h *ublStoreHandler) Post(c echo.Context) error {
 
 	if err := h.ublRepo.Insert(context, ubl); err != nil {
 		return err
+	}
+
+	if attach != nil {
+		for aid, v := range *attach {
+
+			att := entities.AttachmentEntity{UblID: ubl.ID, Created: time.Now(), Hash: h.ubl.Hash(v)}
+
+			if id, err := uuid.Parse(aid); err != nil {
+				return err
+			} else {
+				att.ID = id
+			}
+
+			cBytes, err := h.compressor.Compress(context, v, b)
+
+			if err != nil {
+				return err
+			}
+
+			if err := h.ublStore.Write(context, aid, cBytes); err != nil {
+				return err
+			}
+
+			if err := h.attachmentRepo.Insert(context, att); err != nil {
+				return err
+			}
+		}
 	}
 
 	return c.NoContent(http.StatusOK)

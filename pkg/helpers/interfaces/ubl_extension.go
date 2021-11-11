@@ -1,5 +1,6 @@
 package interfaces
 
 type UblExtension interface {
-	GetUUID([]byte) (string, error)
+	Hash(s string) string
+	ParseUbl([]byte) (string, string, *map[string]string, error)
 }
