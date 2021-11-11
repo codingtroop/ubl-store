@@ -1,12 +1,10 @@
 package handlers
 
 import (
-	"bytes"
 	"encoding/base64"
 	"net/http"
 	"time"
 
-	"github.com/antchfx/xmlquery"
 	"github.com/codingtroop/ubl-store/pkg/entities"
 	handler "github.com/codingtroop/ubl-store/pkg/handlers/interfaces"
 	helpers "github.com/codingtroop/ubl-store/pkg/helpers/interfaces"
@@ -22,11 +20,12 @@ type ublStoreHandler struct {
 	ublStore        helpers.Storer
 	attachmentStore helpers.Storer
 	compressor      helpers.Compressor
+	ubl             helpers.UblExtension
 }
 
 func NewUblStoreHandler(ur repo.UblRepository,
-	ar repo.AttachmentRepository, us helpers.Storer, as helpers.Storer, c helpers.Compressor) handler.UblStoreHandler {
-	return &ublStoreHandler{ublRepo: ur, attachmentRepo: ar, ublStore: us, attachmentStore: as, compressor: c}
+	ar repo.AttachmentRepository, us helpers.Storer, as helpers.Storer, c helpers.Compressor, u helpers.UblExtension) handler.UblStoreHandler {
+	return &ublStoreHandler{ublRepo: ur, attachmentRepo: ar, ublStore: us, attachmentStore: as, compressor: c, ubl: u}
 }
 
 // Get godoc
@@ -100,14 +99,12 @@ func (h *ublStoreHandler) Post(c echo.Context) error {
 		return err
 	}
 
-	doc, err := xmlquery.Parse(bytes.NewReader(b))
+	uuidText, err := h.ubl.GetUUID(b)
 
 	if err != nil {
 		return err
 	}
 
-	uuidNode := xmlquery.FindOne(doc, "//cbc:UUID")
-	uuidText := uuidNode.InnerText()
 	ubl := entities.UblEntity{Created: time.Now()}
 
 	if id, err := uuid.Parse(uuidText); err != nil {
