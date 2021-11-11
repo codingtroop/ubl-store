@@ -14,6 +14,21 @@ type ioStorer struct {
 func NewIOStorer(f string) interfaces.Storer {
 	return &ioStorer{folder: f}
 }
+
+func (h *ioStorer) Exists(c context.Context, hash string) (bool, error) {
+	_, err := os.Stat(h.folder + "/" + hash)
+
+	if err == nil {
+		return true, nil
+	}
+
+	if os.IsNotExist(err) {
+		return false, nil
+	} else {
+		return false, err
+	}
+}
+
 func (h *ioStorer) Read(c context.Context, uuid string) ([]byte, error) {
 	return os.ReadFile(h.folder + "/" + uuid)
 }

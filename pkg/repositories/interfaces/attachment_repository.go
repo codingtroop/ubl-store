@@ -8,7 +8,7 @@ import (
 )
 
 type AttachmentRepository interface {
-	Get(cntxt context.Context, uuid uuid.UUID) (*entities.AttachmentEntity, error)
+	Get(cntxt context.Context, uuid uuid.UUID) ([]*entities.AttachmentEntity, error)
 	Insert(cntxt context.Context, attachment entities.AttachmentEntity) error
 	Delete(cntxt context.Context, uuid uuid.UUID) error
 }

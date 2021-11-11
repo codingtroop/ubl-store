@@ -1,7 +1,8 @@
 package helpers
 
 import (
-	"hash/fnv"
+	"crypto/sha256"
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -17,9 +18,7 @@ func NewUblExtension() interfaces.UblExtension {
 }
 
 func (u *ublExtension) Hash(s string) string {
-	h := fnv.New32a()
-	h.Write([]byte(s))
-	return string(h.Sum32())
+	return fmt.Sprintf("%x", sha256.Sum256([]byte(s)))
 }
 
 func (u *ublExtension) ParseUbl(data []byte) (string, string, *map[string]string, error) {

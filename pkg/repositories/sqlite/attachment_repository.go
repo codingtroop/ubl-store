@@ -19,8 +19,8 @@ func NewSqliteAttanchmentRepository(db *sql.DB) interfaces.AttachmentRepository 
 	return &sqliteAttachmentRepository{db: db}
 }
 
-func (r *sqliteAttachmentRepository) Get(cntxt context.Context, id uuid.UUID) (*entities.AttachmentEntity, error) {
-	q := "SELECT * FROM attachment where ID = ?"
+func (r *sqliteAttachmentRepository) Get(cntxt context.Context, id uuid.UUID) ([]*entities.AttachmentEntity, error) {
+	q := "SELECT * FROM attachment where UblID = ?"
 
 	ps, err := r.db.Prepare(q)
 
@@ -28,24 +28,23 @@ func (r *sqliteAttachmentRepository) Get(cntxt context.Context, id uuid.UUID) (*
 		return nil, err
 	}
 
-	qs := ps.QueryRow(id)
+	qs, err := ps.Query(id)
 
 	if err != nil {
 		return nil, err
 	}
 
-	entity := entities.AttachmentEntity{}
+	defer qs.Close()
 
-	if err := qs.Scan(&entity.ID, &entity.Created, &entity.UblID, &entity.Hash); err != nil {
+	atts := []*entities.AttachmentEntity{}
 
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
-
-		return nil, err
+	for qs.Next() {
+		entity := entities.AttachmentEntity{}
+		qs.Scan(&entity.ID, &entity.Created, &entity.UblID, &entity.Hash)
+		atts = append(atts, &entity)
 	}
 
-	return &entity, nil
+	return atts, nil
 }
 
 func (r *sqliteAttachmentRepository) Insert(cntxt context.Context, e entities.AttachmentEntity) error {

@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/base64"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/codingtroop/ubl-store/pkg/entities"
@@ -74,7 +75,36 @@ func (h *ublStoreHandler) Get(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, &models.UblModel{Data: data})
+	atts, err := h.attachmentRepo.Get(context, ubl.ID)
+
+	if err != nil {
+		return err
+	}
+
+	sdata := string(data)
+
+	for _, v := range atts {
+		zipData, err := h.attachmentStore.Read(context, v.Hash)
+
+		if err != nil {
+			return err
+		}
+
+		if zipData == nil {
+			return c.NoContent(http.StatusNotFound)
+		}
+
+		data, err := h.compressor.Decompress(context, zipData)
+
+		if err != nil {
+			return err
+		}
+
+		sdata = strings.ReplaceAll(sdata, v.Hash, string(data))
+
+	}
+
+	return c.JSON(http.StatusOK, &models.UblModel{Data: []byte(data)})
 }
 
 // Post godoc
@@ -115,7 +145,7 @@ func (h *ublStoreHandler) Post(c echo.Context) error {
 
 	context := c.Request().Context()
 
-	cBytes, err := h.compressor.Compress(context, ublText, b)
+	cBytes, err := h.compressor.Compress(context, uuidText, []byte(ublText))
 
 	if err != nil {
 		return err
@@ -140,14 +170,23 @@ func (h *ublStoreHandler) Post(c echo.Context) error {
 				att.ID = id
 			}
 
-			cBytes, err := h.compressor.Compress(context, v, b)
+			//check hash exist on store
+			exist, err := h.attachmentStore.Exists(context, att.Hash)
 
 			if err != nil {
 				return err
 			}
 
-			if err := h.ublStore.Write(context, aid, cBytes); err != nil {
-				return err
+			if !exist {
+				cBytes, err := h.compressor.Compress(context, att.Hash, []byte(v))
+
+				if err != nil {
+					return err
+				}
+
+				if err := h.attachmentStore.Write(context, att.Hash, cBytes); err != nil {
+					return err
+				}
 			}
 
 			if err := h.attachmentRepo.Insert(context, att); err != nil {
