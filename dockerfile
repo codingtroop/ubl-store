@@ -2,6 +2,8 @@ FROM golang:1.17-alpine as build
 
 WORKDIR /app
 
+RUN apk  --no-cache --update upgrade && apk --no-cache add gcc ca-certificates musl-dev
+
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 
 COPY go.mod go.sum ./
@@ -18,6 +20,7 @@ FROM alpine:3.14
 
 WORKDIR /app
 COPY --from=build /ubl-store .
+COPY --from=build /app/config.yml .
 
 EXPOSE 80
 
