@@ -1,11 +1,24 @@
 package config
 
-type Configurations struct {
-	Db DatabaseConfigurations
+type Configuration struct {
+	Port    string
+	Db      DatabaseConfiguration
+	Storage StorageConfiguration
 }
 
-type DatabaseConfigurations struct {
-	Type             string
-	Path             string
-	ConnectionString string
+type DatabaseConfiguration struct {
+	Sqlite SqliteConfiguration
+}
+
+type StorageConfiguration struct {
+	Filesystem FilesystemConfiguration
+}
+
+type SqliteConfiguration struct {
+	Path string
+}
+
+type FilesystemConfiguration struct {
+	UblPath        string
+	AttachmentPath string
 }

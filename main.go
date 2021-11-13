@@ -23,7 +23,7 @@ func main() {
 	viper.SetConfigName("config") // name of config file (without extension)
 	viper.SetConfigType("yml")    //
 
-	var configuration config.Configurations
+	var configuration config.Configuration
 
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Error reading config file, %s", err)
@@ -34,7 +34,7 @@ func main() {
 		log.Fatalf("Unable to decode into struct, %v", err)
 	}
 
-	sqliteConnector := sqlite.NewSqliteConnector(configuration.Db.Path)
+	sqliteConnector := sqlite.NewSqliteConnector(configuration.Db.Sqlite.Path)
 	db, err := sqliteConnector.Connect()
 
 	if err != nil {
@@ -50,8 +50,8 @@ func main() {
 	ur := sqlite.NewSqliteUblRepository(db)
 	ar := sqlite.NewSqliteAttanchmentRepository(db)
 
-	us := helpers.NewIOStorer("ubls")
-	as := helpers.NewIOStorer("attachments")
+	us := helpers.NewIOStorer(configuration.Storage.Filesystem.UblPath)
+	as := helpers.NewIOStorer(configuration.Storage.Filesystem.AttachmentPath)
 	c := helpers.NewGZip()
 	u := helpers.NewUblExtension()
 
@@ -69,5 +69,5 @@ func main() {
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":" + configuration.Port))
 }
