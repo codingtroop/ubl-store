@@ -1,11 +1,13 @@
 package helpers
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"fmt"
 	"regexp"
 	"strings"
 
+	"github.com/antchfx/xmlquery"
 	"github.com/codingtroop/ubl-store/pkg/helpers/interfaces"
 	"github.com/google/uuid"
 )
@@ -24,37 +26,32 @@ func (u *ublExtension) Hash(s string) string {
 func (u *ublExtension) ParseUbl(data []byte) (string, string, *map[string]string, error) {
 	bs := string(data)
 
-	su := "<cbc:UUID>"
-	eu := "</cbc:UUID>"
+	doc, err := xmlquery.Parse(bytes.NewReader(data))
+	if err != nil {
+		return "", "", nil, err
+	}
 
-	sui := strings.Index(bs, su)
-	eui := strings.Index(bs, eu)
+	var id string
+	var prefix string
 
-	id := bs[sui+len(su) : eui]
+	if uuidNode := xmlquery.FindOne(doc, "//*[local-name()='UUID']"); uuidNode != nil {
+		id = uuidNode.InnerText()
+		prefix = uuidNode.Prefix
+	}
 
-	st := "<cac:AdditionalDocumentReference>"
-	et := "</cac:AdditionalDocumentReference>"
-	bo := "</cbc:EmbeddedDocumentBinaryObject>"
+	bo := "</" + prefix + ":EmbeddedDocumentBinaryObject>"
 
-	sti := strings.Index(bs, st)
+	attNodes := xmlquery.Find(doc, "//*[local-name()='AdditionalDocumentReference']")
 
-	if sti == -1 {
+	if len(attNodes) == 0 {
 		return bs, id, nil, nil
 	}
 
-	eti := strings.LastIndex(bs, et)
-
-	t := bs[sti : eti+len(et)]
-
-	ta := strings.Split(t, st)
-
 	tam := map[string]string{}
 
-	for _, v := range ta {
+	for _, n := range attNodes {
 
-		if v == "" {
-			continue
-		}
+		v := n.OutputXML(true)
 
 		tuuid := uuid.New().String()
 
@@ -62,7 +59,7 @@ func (u *ublExtension) ParseUbl(data []byte) (string, string, *map[string]string
 
 		f := r.FindString(v)
 
-		v := v[strings.Index(v, f)+len(f) : strings.Index(v, bo)]
+		v = v[strings.Index(v, f)+len(f) : strings.Index(v, bo)]
 
 		bs = strings.ReplaceAll(bs, v, tuuid)
 
