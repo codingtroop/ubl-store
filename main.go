@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"strings"
 
 	_ "github.com/codingtroop/ubl-store/docs"
 	"github.com/codingtroop/ubl-store/pkg/config"
@@ -19,22 +21,16 @@ func main() {
 
 	hc := api.NewHealthCheckHandler()
 
-	viper.AddConfigPath(".")
-	viper.SetConfigName("config") // name of config file (without extension)
-	viper.SetConfigType("yml")    //
+	var configuration config.Configuration
 
-	var configuration config.Configurations
+	v := LoadConfig()
 
-	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("Error reading config file, %s", err)
-	}
-
-	err := viper.Unmarshal(&configuration)
+	err := v.Unmarshal(&configuration)
 	if err != nil {
 		log.Fatalf("Unable to decode into struct, %v", err)
 	}
 
-	sqliteConnector := sqlite.NewSqliteConnector(configuration.Db.Path)
+	sqliteConnector := sqlite.NewSqliteConnector(configuration.Db.Sqlite.Path)
 	db, err := sqliteConnector.Connect()
 
 	if err != nil {
@@ -50,8 +46,8 @@ func main() {
 	ur := sqlite.NewSqliteUblRepository(db)
 	ar := sqlite.NewSqliteAttanchmentRepository(db)
 
-	us := helpers.NewIOStorer("ubls")
-	as := helpers.NewIOStorer("attachments")
+	us := helpers.NewIOStorer(configuration.Storage.Filesystem.UblPath)
+	as := helpers.NewIOStorer(configuration.Storage.Filesystem.AttachmentPath)
 	c := helpers.NewGZip()
 	u := helpers.NewUblExtension()
 
@@ -69,5 +65,35 @@ func main() {
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":" + configuration.Port))
+}
+
+func LoadConfig() *viper.Viper {
+	conf := viper.New()
+
+	conf.AutomaticEnv()
+	conf.SetEnvPrefix("ublstore")
+	conf.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
+	conf.SetConfigName("config")
+	conf.SetConfigType("yml")
+	conf.AddConfigPath(".")
+	err := conf.ReadInConfig()
+
+	if err != nil {
+		switch err.(type) {
+		default:
+			panic(fmt.Errorf("fatal error loading config file: %s", err))
+		case viper.ConfigFileNotFoundError:
+			fmt.Errorf("No config file found. Using defaults and environment variables")
+		}
+	}
+
+	// workaround because viper does not treat env vars the same as other config
+	for _, key := range conf.AllKeys() {
+		val := conf.Get(key)
+		conf.Set(key, val)
+	}
+
+	return conf
 }

@@ -12,6 +12,9 @@
             "preLaunchTask": "swagger",
             "cwd":"${workspaceFolder}",
             "program": "./main.go",
+            "env":{
+                "UBLSTORE_PORT":"2050"
+            },
             "serverReadyAction":{
                 "action": "openExternally",
                 "pattern": "http server started on \\[::\\]:([0-9]+)",
