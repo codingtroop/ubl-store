@@ -26,12 +26,12 @@ func main() {
 	var configuration config.Configurations
 
 	if err := viper.ReadInConfig(); err != nil {
-		log.Printf("Error reading config file, %s", err)
+		log.Fatalf("Error reading config file, %s", err)
 	}
 
 	err := viper.Unmarshal(&configuration)
 	if err != nil {
-		log.Printf("Unable to decode into struct, %v", err)
+		log.Fatalf("Unable to decode into struct, %v", err)
 	}
 
 	sqliteConnector := sqlite.NewSqliteConnector(configuration.Db.Path)
