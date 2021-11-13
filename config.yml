@@ -1,4 +1,4 @@
-port: 1323
+port: 
 db:
   sqlite:
     path: ./sqlite-database.db

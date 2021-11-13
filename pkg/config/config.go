@@ -1,7 +1,7 @@
 package config
 
 type Configuration struct {
-	Port    string
+	Port    string `mapstructure:"PORT"`
 	Db      DatabaseConfiguration
 	Storage StorageConfiguration
 }
