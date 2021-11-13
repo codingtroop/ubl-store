@@ -4,11 +4,13 @@ import (
 	"log"
 
 	_ "github.com/codingtroop/ubl-store/docs"
+	"github.com/codingtroop/ubl-store/pkg/config"
 	api "github.com/codingtroop/ubl-store/pkg/handlers"
 	"github.com/codingtroop/ubl-store/pkg/helpers"
 	"github.com/codingtroop/ubl-store/pkg/repositories/sqlite"
 	"github.com/labstack/echo/v4"
 	_ "github.com/mattn/go-sqlite3" // Import go-sqlite3 library
+	"github.com/spf13/viper"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
@@ -17,8 +19,22 @@ func main() {
 
 	hc := api.NewHealthCheckHandler()
 
-	dbPath := "./sqlite-database.db"
-	sqliteConnector := sqlite.NewSqliteConnector(dbPath)
+	viper.AddConfigPath(".")
+	viper.SetConfigName("config") // name of config file (without extension)
+	viper.SetConfigType("yml")    //
+
+	var configuration config.Configurations
+
+	if err := viper.ReadInConfig(); err != nil {
+		log.Printf("Error reading config file, %s", err)
+	}
+
+	err := viper.Unmarshal(&configuration)
+	if err != nil {
+		log.Printf("Unable to decode into struct, %v", err)
+	}
+
+	sqliteConnector := sqlite.NewSqliteConnector(configuration.Db.Path)
 	db, err := sqliteConnector.Connect()
 
 	if err != nil {
