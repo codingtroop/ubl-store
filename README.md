@@ -5,6 +5,7 @@
 [![HitCount](http://hits.dwyl.com/codingtroop/ubl-store.svg)](http://hits.dwyl.com/codingtroop/ubl-store)
 [![codecov](https://codecov.io/gh/codingtroop/ubl-store/branch/main/graph/badge.svg?token=6E72396ORB)](https://codecov.io/gh/codingtroop/ubl-store)
 
+
 ## Swaggo
 
 ```shell
