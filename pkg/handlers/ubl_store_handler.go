@@ -4,29 +4,22 @@ import (
 	"encoding/base64"
 	"net/http"
 	"strings"
-	"time"
 
-	"github.com/codingtroop/ubl-store/pkg/entities"
 	handler "github.com/codingtroop/ubl-store/pkg/handlers/interfaces"
 	helpers "github.com/codingtroop/ubl-store/pkg/helpers/interfaces"
 	"github.com/codingtroop/ubl-store/pkg/models"
-	repo "github.com/codingtroop/ubl-store/pkg/repositories/interfaces"
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
 type ublStoreHandler struct {
-	ublRepo         repo.UblRepository
-	attachmentRepo  repo.AttachmentRepository
 	ublStore        helpers.Storer
 	attachmentStore helpers.Storer
 	compressor      helpers.Compressor
 	ubl             helpers.UblExtension
 }
 
-func NewUblStoreHandler(ur repo.UblRepository,
-	ar repo.AttachmentRepository, us helpers.Storer, as helpers.Storer, c helpers.Compressor, u helpers.UblExtension) handler.UblStoreHandler {
-	return &ublStoreHandler{ublRepo: ur, attachmentRepo: ar, ublStore: us, attachmentStore: as, compressor: c, ubl: u}
+func NewUblStoreHandler(us helpers.Storer, as helpers.Storer, c helpers.Compressor, u helpers.UblExtension) handler.UblStoreHandler {
+	return &ublStoreHandler{ublStore: us, attachmentStore: as, compressor: c, ubl: u}
 }
 
 // Get godoc
@@ -41,23 +34,7 @@ func (h *ublStoreHandler) Get(c echo.Context) error {
 
 	id := c.Param("id")
 
-	guid, err := uuid.Parse(id)
-
-	if err != nil {
-		return err
-	}
-
 	context := c.Request().Context()
-
-	ubl, err := h.ublRepo.Get(context, guid)
-
-	if err != nil {
-		return err
-	}
-
-	if ubl == nil {
-		return c.NoContent(http.StatusNotFound)
-	}
 
 	zipData, err := h.ublStore.Read(context, id)
 
@@ -75,7 +52,7 @@ func (h *ublStoreHandler) Get(c echo.Context) error {
 		return err
 	}
 
-	atts, err := h.attachmentRepo.Get(context, ubl.ID)
+	atts, err := h.ubl.GetAdditionalDocumentReferances(data)
 
 	if err != nil {
 		return err
@@ -83,8 +60,8 @@ func (h *ublStoreHandler) Get(c echo.Context) error {
 
 	sdata := string(data)
 
-	for _, v := range atts {
-		zipData, err := h.attachmentStore.Read(context, v.Hash)
+	for _, hash := range *atts {
+		zipData, err := h.attachmentStore.Read(context, hash)
 
 		if err != nil {
 			return err
@@ -100,11 +77,10 @@ func (h *ublStoreHandler) Get(c echo.Context) error {
 			return err
 		}
 
-		sdata = strings.ReplaceAll(sdata, v.Hash, string(data))
-
+		sdata = strings.ReplaceAll(sdata, hash, string(data))
 	}
 
-	return c.JSON(http.StatusOK, &models.UblModel{Data: []byte(data)})
+	return c.JSON(http.StatusOK, &models.UblModel{Data: []byte(sdata)})
 }
 
 // Post godoc
@@ -129,18 +105,10 @@ func (h *ublStoreHandler) Post(c echo.Context) error {
 		return err
 	}
 
-	ublText, uuidText, attach, err := h.ubl.ParseUbl(b)
+	ublText, uuidText, attach, err := h.ubl.Parse(b)
 
 	if err != nil {
 		return err
-	}
-
-	ubl := entities.UblEntity{Created: time.Now()}
-
-	if id, err := uuid.Parse(uuidText); err != nil {
-		return err
-	} else {
-		ubl.ID = id
 	}
 
 	context := c.Request().Context()
@@ -155,41 +123,23 @@ func (h *ublStoreHandler) Post(c echo.Context) error {
 		return err
 	}
 
-	if err := h.ublRepo.Insert(context, ubl); err != nil {
-		return err
-	}
+	for hash, v := range *attach {
 
-	if attach != nil {
-		for aid, v := range *attach {
+		//check hash exist on store
+		exist, err := h.attachmentStore.Exists(context, hash)
 
-			att := entities.AttachmentEntity{UblID: ubl.ID, Created: time.Now(), Hash: h.ubl.Hash(v)}
+		if err != nil {
+			return err
+		}
 
-			if id, err := uuid.Parse(aid); err != nil {
-				return err
-			} else {
-				att.ID = id
-			}
-
-			//check hash exist on store
-			exist, err := h.attachmentStore.Exists(context, att.Hash)
+		if !exist {
+			cBytes, err := h.compressor.Compress(context, hash, []byte(v))
 
 			if err != nil {
 				return err
 			}
 
-			if !exist {
-				cBytes, err := h.compressor.Compress(context, att.Hash, []byte(v))
-
-				if err != nil {
-					return err
-				}
-
-				if err := h.attachmentStore.Write(context, att.Hash, cBytes); err != nil {
-					return err
-				}
-			}
-
-			if err := h.attachmentRepo.Insert(context, att); err != nil {
+			if err := h.attachmentStore.Write(context, hash, cBytes); err != nil {
 				return err
 			}
 		}
@@ -211,12 +161,6 @@ func (h *ublStoreHandler) Delete(c echo.Context) error {
 	model := models.DeleteModel{}
 
 	if err := c.Bind(model); err != nil {
-		return err
-	}
-
-	context := c.Request().Context()
-
-	if err := h.ublRepo.Delete(context, model.ID); err != nil {
 		return err
 	}
 

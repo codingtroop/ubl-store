@@ -9,7 +9,6 @@ import (
 	"github.com/codingtroop/ubl-store/pkg/config"
 	api "github.com/codingtroop/ubl-store/pkg/handlers"
 	"github.com/codingtroop/ubl-store/pkg/helpers"
-	"github.com/codingtroop/ubl-store/pkg/repositories/sqlite"
 	"github.com/labstack/echo/v4"
 	_ "github.com/mattn/go-sqlite3" // Import go-sqlite3 library
 	"github.com/spf13/viper"
@@ -30,28 +29,12 @@ func main() {
 		log.Fatalf("Unable to decode into struct, %v", err)
 	}
 
-	sqliteConnector := sqlite.NewSqliteConnector(configuration.Db.Sqlite.Path)
-	db, err := sqliteConnector.Connect()
-
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	defer db.Close()
-
-	if err := sqliteConnector.Init(db); err != nil {
-		log.Fatal(err.Error())
-	}
-
-	ur := sqlite.NewSqliteUblRepository(db)
-	ar := sqlite.NewSqliteAttanchmentRepository(db)
-
 	us := helpers.NewIOStorer(configuration.Storage.Filesystem.UblPath)
 	as := helpers.NewIOStorer(configuration.Storage.Filesystem.AttachmentPath)
 	c := helpers.NewGZip()
 	u := helpers.NewUblExtension()
 
-	uh := api.NewUblStoreHandler(ur, ar, us, as, c, u)
+	uh := api.NewUblStoreHandler(us, as, c, u)
 
 	e.GET("/health", hc.Live)
 	e.GET("/health/live", hc.Live)
@@ -85,7 +68,7 @@ func LoadConfig() *viper.Viper {
 		default:
 			panic(fmt.Errorf("fatal error loading config file: %s", err))
 		case viper.ConfigFileNotFoundError:
-			fmt.Errorf("No config file found. Using defaults and environment variables")
+			panic("No config file found. Using defaults and environment variables")
 		}
 	}
 

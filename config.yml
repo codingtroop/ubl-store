@@ -1,7 +1,4 @@
-port: 
-db:
-  sqlite:
-    path: ./sqlite-database.db
+port:  
 storage:
   filesystem:
     ublPath: ./ubls
