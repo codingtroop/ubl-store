@@ -8,4 +8,11 @@ services:
       UBLSTORE_PORT: 80
     ports:
       - 8080:80
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      UBLSTORE_PORT: 80
+    ports:
+      - 9001:9001
 
