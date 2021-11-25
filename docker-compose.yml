@@ -8,11 +8,24 @@ services:
       UBLSTORE_PORT: 80
     ports:
       - 8080:80
+
   minio:
     image: minio/minio
-    command: server /data --console-address ":9001"
-    environment:
-      UBLSTORE_PORT: 80
     ports:
-      - 9001:9001
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./.minio/data:/export
+      - ./.minio/config:/root/.minio
+    command: server /export --console-address ":9001"
 
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin) do echo '...waiting...' && sleep 1; done;
+      /usr/bin/mc mb myminio/ubl-store;
+      /usr/bin/mc policy set download myminio/ubl-store;
+      "
