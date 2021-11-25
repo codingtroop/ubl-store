@@ -2,8 +2,6 @@ FROM golang:1.17-alpine as build
 
 WORKDIR /app
 
-RUN apk  --no-cache --update upgrade && apk --no-cache add gcc ca-certificates musl-dev
-
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 
 COPY go.mod go.sum ./

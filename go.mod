@@ -6,7 +6,6 @@ require (
 	github.com/antchfx/xmlquery v1.3.8
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.6.1
-	github.com/mattn/go-sqlite3 v1.14.9
 	github.com/spf13/viper v1.9.0
 	github.com/swaggo/echo-swagger v1.1.4
 	github.com/swaggo/swag v1.7.4

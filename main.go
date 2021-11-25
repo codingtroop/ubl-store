@@ -10,7 +10,6 @@ import (
 	api "github.com/codingtroop/ubl-store/pkg/handlers"
 	"github.com/codingtroop/ubl-store/pkg/helpers"
 	"github.com/labstack/echo/v4"
-	_ "github.com/mattn/go-sqlite3" // Import go-sqlite3 library
 	"github.com/spf13/viper"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
