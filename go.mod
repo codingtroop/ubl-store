@@ -8,7 +8,7 @@ require (
 	github.com/labstack/echo/v4 v4.6.1
 	github.com/spf13/viper v1.9.0
 	github.com/swaggo/echo-swagger v1.1.4
-	github.com/swaggo/swag v1.7.4
+	github.com/swaggo/swag v1.7.5
 )
 
 require (
