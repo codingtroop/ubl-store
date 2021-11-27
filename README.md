@@ -11,3 +11,13 @@
 ```shell
 go install github.com/swaggo/swag/cmd/swag@latest
 ```
+
+# Storage Size Comparisation
+
+10.000 Sample Invoice from 3 different issuer
+
+|           | Size    | Rate |
+|-----------|---------|------|
+| **Original**  | 2.46 GB | 100% |
+| **Zipped**   | 519 MB  | 21%  |
+| **ubl-store** | 41 MB   | 1.6% |
