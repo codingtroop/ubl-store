@@ -6,6 +6,11 @@ services:
       context: .
     environment:
       UBLSTORE_PORT: 80
+      UBLSTORE_STORAGE_FILESYSTEM_UBLPATH: /data/ubl-store/ubl
+      UBLSTORE_STORAGE_FILESYSTEM_ATTACHMENTPATH: /data/ubl-store/attachment
+    volumes:
+      - ./.data/ubl:/data/ubl-store/ubl
+      - ./.data/attachment:/data/ubl-store/attachment
     ports:
       - 8080:80
 
