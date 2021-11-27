@@ -52,7 +52,7 @@ func (h *ublStoreHandler) Get(c echo.Context) error {
 		return err
 	}
 
-	atts, err := h.ubl.GetAdditionalDocumentReferances(data)
+	atts, err := h.ubl.GetAdditionalInfo(data)
 
 	if err != nil {
 		return err

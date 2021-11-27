@@ -22,7 +22,23 @@ func (u *ublExtension) Hash(s string) string {
 	return fmt.Sprintf("%x", sha256.Sum256([]byte(s)))
 }
 
-func (u *ublExtension) GetAdditionalDocumentReferances(data []byte) (*[]string, error) {
+func (u *ublExtension) GetCertificate(data []byte) (string, error) {
+
+	doc, err := xmlquery.Parse(bytes.NewReader(data))
+
+	if err != nil {
+		return "", err
+	}
+	certNode := xmlquery.FindOne(doc, "//*[local-name()='X509Data']")
+
+	if certNode == nil {
+		return "", nil
+	}
+
+	return certNode.OutputXML(true), nil
+}
+
+func (u *ublExtension) GetAdditionalInfo(data []byte) (*[]string, error) {
 
 	doc, err := xmlquery.Parse(bytes.NewReader(data))
 	if err != nil {
@@ -39,11 +55,17 @@ func (u *ublExtension) GetAdditionalDocumentReferances(data []byte) (*[]string, 
 
 	attNodes := xmlquery.Find(doc, "//*[local-name()='AdditionalDocumentReference']")
 
-	if len(attNodes) == 0 {
+	certNode := xmlquery.FindOne(doc, "//*[local-name()='X509Data']")
+
+	if len(attNodes) == 0 && certNode == nil {
 		return nil, nil
 	}
 
 	tam := []string{}
+
+	if certNode != nil {
+		tam = append(tam, certNode.OutputXML(false))
+	}
 
 	for _, n := range attNodes {
 
@@ -81,11 +103,27 @@ func (u *ublExtension) Parse(data []byte) (string, string, *map[string]string, e
 
 	attNodes := xmlquery.Find(doc, "//*[local-name()='AdditionalDocumentReference']")
 
-	if len(attNodes) == 0 {
+	certNode := xmlquery.FindOne(doc, "//*[local-name()='X509Data']")
+
+	if len(attNodes) == 0 && certNode == nil {
 		return bs, id, nil, nil
 	}
 
 	tam := map[string]string{}
+
+	if certNode != nil {
+		xds := fmt.Sprintf("<%s:X509Data>", certNode.Prefix)
+		xde := fmt.Sprintf("</%s:X509Data>", certNode.Prefix)
+
+		xsi := strings.Index(bs, xds)
+		xei := strings.Index(bs, xde)
+
+		cert := bs[xsi+len(xds) : xei]
+		certHash := u.Hash(cert)
+		bs = strings.ReplaceAll(bs, cert, certHash)
+
+		tam[certHash] = cert
+	}
 
 	for _, n := range attNodes {
 
