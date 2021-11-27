@@ -7,9 +7,17 @@ type Configuration struct {
 
 type StorageConfiguration struct {
 	Filesystem FilesystemConfiguration
+	S3         S3Configuration
 }
 
 type FilesystemConfiguration struct {
 	UblPath        string
 	AttachmentPath string
+}
+
+type S3Configuration struct {
+	UblPath        string
+	AttachmentPath string
+	Bucket         string
+	Endpoint       string
 }

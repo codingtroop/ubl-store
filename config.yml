@@ -1,5 +1,10 @@
 port:  
 storage:
   filesystem:
-    ublPath: ./ubls
-    attachmentPath: ./attachments
+    ublPath:
+    attachmentPath: 
+  s3:
+    bucket: 
+    endpoint: 
+    ublPath: 
+    attachmentPath: 
