@@ -16,3 +16,4 @@ attachments/*
 .minio/*
 
 .data/*
+.DS_Store
