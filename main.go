@@ -19,21 +19,20 @@ func main() {
 
 	hc := api.NewHealthCheckHandler()
 
-	var configuration config.Configuration
+	var c config.Configuration
 
 	v := LoadConfig()
 
-	err := v.Unmarshal(&configuration)
+	err := v.Unmarshal(&c)
 	if err != nil {
 		log.Fatalf("Unable to decode into struct, %v", err)
 	}
 
-	us := helpers.NewIOStorer(configuration.Storage.Filesystem.UblPath)
-	as := helpers.NewIOStorer(configuration.Storage.Filesystem.AttachmentPath)
-	c := helpers.NewGZip()
+	us, as := helpers.ResolveStorage(c.Storage)
+	gz := helpers.NewGZip()
 	u := helpers.NewUblExtension()
 
-	uh := api.NewUblStoreHandler(us, as, c, u)
+	uh := api.NewUblStoreHandler(us, as, gz, u)
 
 	e.GET("/health", hc.Live)
 	e.GET("/health/live", hc.Live)
@@ -47,7 +46,7 @@ func main() {
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	e.Logger.Fatal(e.Start(":" + configuration.Port))
+	e.Logger.Fatal(e.Start(":" + c.Port))
 }
 
 func LoadConfig() *viper.Viper {

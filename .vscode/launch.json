@@ -13,7 +13,14 @@
             "cwd":"${workspaceFolder}",
             "program": "./main.go",
             "env":{
-                "UBLSTORE_PORT":"2050"
+                "UBLSTORE_PORT":"2050",
+                "AWS_ACCESS_KEY_ID":"minioadmin",
+                "AWS_SECRET_ACCESS_KEY":"minioadmin",
+                "AWS_REGION":"us-east-1",
+                "UBLSTORE_STORAGE_S3_UBLPATH": "/ubl",
+                "UBLSTORE_STORAGE_S3_ATTACHMENTPATH": "/attachment",
+                "UBLSTORE_STORAGE_S3_ENDPOINT": "http://localhost:9000",
+                "UBLSTORE_STORAGE_S3_BUCKET": "ubl-store"
             },
             "serverReadyAction":{
                 "action": "openExternally",
