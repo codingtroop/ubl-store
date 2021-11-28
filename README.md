@@ -12,7 +12,7 @@
 go install github.com/swaggo/swag/cmd/swag@latest
 ```
 
-# Storage Size Comparisation
+# Storage Size 
 
 10.000 Sample Invoice from 3 different issuer
 
