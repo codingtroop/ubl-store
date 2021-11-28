@@ -112,8 +112,15 @@ func (u *ublExtension) Parse(data []byte) (string, string, *map[string]string, e
 	tam := map[string]string{}
 
 	if certNode != nil {
-		xds := fmt.Sprintf("<%s:X509Data>", certNode.Prefix)
-		xde := fmt.Sprintf("</%s:X509Data>", certNode.Prefix)
+
+		xds := "<X509Data>"
+		xde := "</X509Data>"
+
+		if certNode.Prefix != "" {
+
+			xds = fmt.Sprintf("<%s:X509Data>", certNode.Prefix)
+			xde = fmt.Sprintf("</%s:X509Data>", certNode.Prefix)
+		}
 
 		xsi := strings.Index(bs, xds)
 		xei := strings.Index(bs, xde)
