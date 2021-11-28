@@ -14,7 +14,7 @@ go install github.com/swaggo/swag/cmd/swag@latest
 
 # Storage Size 
 
-10.000 Sample Invoice from 3 different issuer
+10.000 Sample Invoice from 3 issuer
 
 |           | Size    | Compress Rate | Saving |
 |-----------|---------:|------:|------:|
