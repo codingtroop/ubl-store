@@ -13,8 +13,8 @@ services:
       UBLSTORE_STORAGE_S3_ENDPOINT: 
       UBLSTORE_STORAGE_S3_BUCKET: 
     volumes:
-      - ./.data/ubl:/data/ubl-store/ubl
-      - ./.data/attachment:/data/ubl-store/attachment
+      - ./.data2/ubl:/data/ubl-store/ubl
+      - ./.data2/attachment:/data/ubl-store/attachment
     ports:
       - 8080:80
 

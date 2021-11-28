@@ -27,6 +27,25 @@
                 "pattern": "http server started on \\[::\\]:([0-9]+)",
                 "uriFormat": "http://localhost:%s/swagger/index.html"
             }
+        },
+        {
+            "name":"Launch Go Local Storage",
+            "type":"go",
+            "request": "launch",
+            "mode": "debug",
+            "preLaunchTask": "swagger",
+            "cwd":"${workspaceFolder}",
+            "program": "./main.go",
+            "env":{
+                "UBLSTORE_PORT":"2050",
+                "UBLSTORE_STORAGE_FILESYSTEM_UBLPATH": "./.data2/ubl",
+                "UBLSTORE_STORAGE_FILESYSTEM_ATTACHMENTPATH": "./.data2/attachment"
+            },
+            "serverReadyAction":{
+                "action": "openExternally",
+                "pattern": "http server started on \\[::\\]:([0-9]+)",
+                "uriFormat": "http://localhost:%s/swagger/index.html"
+            }
         }
     ]
 }
