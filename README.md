@@ -18,6 +18,6 @@ go install github.com/swaggo/swag/cmd/swag@latest
 
 |           | Size    | Compress Rate | Saving |
 |-----------|---------:|------:|------:|
-| **Original**  | 2.46 GB | 100.0% |  0.0% |
-| **Zipped**   | 519 MB  | 21.0%  | 79.0% |
-| **ubl-store** | 41 MB   | 1.6% | 98.4% |
+| **Original**  | 2,443,6 MB | 100.0% |  0.0% |
+| **Zipped**   | 519.0 MB  | 21.0%  | 79.0% |
+| **ubl-store** |  25.5 MB   | 1.0% | 99.0% |
