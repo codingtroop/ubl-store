@@ -3,6 +3,7 @@ package helpers
 import (
 	"bytes"
 	"crypto/sha256"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -49,9 +50,15 @@ func (u *ublExtension) GetAdditionalInfo(data []byte) (*[]string, error) {
 
 	if uuidNode := xmlquery.FindOne(doc, "//*[local-name()='UUID']"); uuidNode != nil {
 		prefix = uuidNode.Prefix
+	} else {
+		return nil, errors.New("can not read file")
 	}
 
-	bo := "</" + prefix + ":EmbeddedDocumentBinaryObject>"
+	if prefix != "" {
+		prefix += ":"
+	}
+
+	bo := fmt.Sprintf("</%sEmbeddedDocumentBinaryObject>", prefix)
 
 	attNodes := xmlquery.Find(doc, "//*[local-name()='AdditionalDocumentReference']")
 
@@ -97,9 +104,15 @@ func (u *ublExtension) Parse(data []byte) (string, string, *map[string]string, e
 	if uuidNode := xmlquery.FindOne(doc, "//*[local-name()='UUID']"); uuidNode != nil {
 		id = uuidNode.InnerText()
 		prefix = uuidNode.Prefix
+	} else {
+		return "", "", nil, errors.New("can not read file")
 	}
 
-	bo := "</" + prefix + ":EmbeddedDocumentBinaryObject>"
+	if prefix != "" {
+		prefix += ":"
+	}
+
+	bo := fmt.Sprintf("</%sEmbeddedDocumentBinaryObject>", prefix)
 
 	attNodes := xmlquery.Find(doc, "//*[local-name()='AdditionalDocumentReference']")
 
@@ -113,14 +126,14 @@ func (u *ublExtension) Parse(data []byte) (string, string, *map[string]string, e
 
 	if certNode != nil {
 
-		xds := "<X509Data>"
-		xde := "</X509Data>"
+		prefix := certNode.Prefix
 
-		if certNode.Prefix != "" {
-
-			xds = fmt.Sprintf("<%s:X509Data>", certNode.Prefix)
-			xde = fmt.Sprintf("</%s:X509Data>", certNode.Prefix)
+		if prefix != "" {
+			prefix += ":"
 		}
+
+		xds := fmt.Sprintf("<%sX509Data>", certNode.Prefix)
+		xde := fmt.Sprintf("</%sX509Data>", certNode.Prefix)
 
 		xsi := strings.Index(bs, xds)
 		xei := strings.Index(bs, xde)
