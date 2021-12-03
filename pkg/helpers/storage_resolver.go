@@ -13,7 +13,7 @@ func ResolveStorage(sc config.StorageConfiguration) (ubl interfaces.Storer, atta
 		return
 	}
 
-	if sc.S3.AttachmentPath != "" && sc.S3.Bucket != "" && sc.S3.Endpoint != "" && sc.S3.UblPath != "" {
+	if sc.S3.AttachmentPath != "" && sc.S3.Bucket != "" && sc.S3.UblPath != "" {
 		ubl = NewS3Storer(sc.S3.Endpoint, sc.S3.UblPath, sc.S3.Bucket)
 		attach = NewS3Storer(sc.S3.Endpoint, sc.S3.AttachmentPath, sc.S3.Bucket)
 		return
