@@ -5,18 +5,28 @@ import (
 	"testing"
 
 	"github.com/codingtroop/ubl-store/pkg/helpers"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_GZip_UnZip_Ok(t *testing.T) {
 	zh := helpers.NewGZip()
 
-	d, err := zh.Compress(context.TODO(), "test", []byte("test"))
+	fileName := uuid.New().String()
+	data := []byte(uuid.New().String())
+
+	compressed, err := zh.Compress(context.TODO(), fileName, data)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if _, err := zh.Decompress(context.TODO(), d); err != nil {
+	decompressed, err := zh.Decompress(context.TODO(), compressed)
+
+	if err != nil {
 		t.Fatal(err)
 	}
+
+	assert.ElementsMatch(t, data, decompressed, "they should be equal")
+
 }
