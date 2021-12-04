@@ -11,13 +11,10 @@ type StorageConfiguration struct {
 }
 
 type FilesystemConfiguration struct {
-	UblPath        string
-	AttachmentPath string
+	DataPath string
 }
 
 type S3Configuration struct {
-	UblPath        string
-	AttachmentPath string
-	Bucket         string
-	Endpoint       string
+	Bucket   string
+	Endpoint string
 }

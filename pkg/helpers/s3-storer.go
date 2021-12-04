@@ -56,7 +56,7 @@ func (h *s3Storer) Exists(c context.Context, hash string) (bool, error) {
 		Key:    aws.String(h.folder + "/" + hash),
 	})
 
-	if err == nil {
+	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
 			switch aerr.Code() {
 			case "NotFound": // s3.ErrCodeNoSuchKey does not work, aws is missing this error code so we hardwire a string
