@@ -9,6 +9,7 @@ import (
 	helpers "github.com/codingtroop/ubl-store/pkg/helpers/interfaces"
 	"github.com/codingtroop/ubl-store/pkg/models"
 	"github.com/labstack/echo/v4"
+	"github.com/pkg/errors"
 )
 
 type ublStoreHandler struct {
@@ -39,7 +40,7 @@ func (h *ublStoreHandler) Get(c echo.Context) error {
 	zipData, err := h.ublStore.Read(context, id)
 
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "cant access ubl storage"))
 	}
 
 	if zipData == nil {
@@ -49,13 +50,13 @@ func (h *ublStoreHandler) Get(c echo.Context) error {
 	data, err := h.compressor.Decompress(context, zipData)
 
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "invalid document"))
 	}
 
 	atts, err := h.ubl.GetAdditionalInfo(data)
 
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "invalid document"))
 	}
 
 	sdata := string(data)
@@ -64,7 +65,7 @@ func (h *ublStoreHandler) Get(c echo.Context) error {
 		zipData, err := h.attachmentStore.Read(context, hash)
 
 		if err != nil {
-			return err
+			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "invalid document"))
 		}
 
 		if zipData == nil {
@@ -74,7 +75,7 @@ func (h *ublStoreHandler) Get(c echo.Context) error {
 		data, err := h.compressor.Decompress(context, zipData)
 
 		if err != nil {
-			return err
+			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "invalid document"))
 		}
 
 		sdata = strings.ReplaceAll(sdata, hash, string(data))
@@ -102,13 +103,13 @@ func (h *ublStoreHandler) Post(c echo.Context) error {
 	b, err := base64.StdEncoding.DecodeString(model.Data)
 
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "invalid payload"))
 	}
 
 	ublText, uuidText, attach, err := h.ubl.Parse(b)
 
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "can't parse ubl"))
 	}
 
 	context := c.Request().Context()
@@ -120,7 +121,7 @@ func (h *ublStoreHandler) Post(c echo.Context) error {
 	}
 
 	if err := h.ublStore.Write(context, uuidText, cBytes); err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "can't store ubl"))
 	}
 
 	for hash, v := range *attach {
@@ -129,7 +130,7 @@ func (h *ublStoreHandler) Post(c echo.Context) error {
 		exist, err := h.attachmentStore.Exists(context, hash)
 
 		if err != nil {
-			return err
+			return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "can't access attachment store"))
 		}
 
 		if !exist {
@@ -140,7 +141,7 @@ func (h *ublStoreHandler) Post(c echo.Context) error {
 			}
 
 			if err := h.attachmentStore.Write(context, hash, cBytes); err != nil {
-				return err
+				return echo.NewHTTPError(http.StatusInternalServerError, errors.Wrap(err, "can't store attachment"))
 			}
 		}
 	}
@@ -161,7 +162,7 @@ func (h *ublStoreHandler) Delete(c echo.Context) error {
 	model := models.DeleteModel{}
 
 	if err := c.Bind(model); err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusBadRequest, errors.Wrap(err, "invalid payload"))
 	}
 
 	return c.NoContent(http.StatusOK)
