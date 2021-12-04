@@ -7,6 +7,7 @@ require (
 	github.com/aws/aws-sdk-go v1.42.13
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.6.1
+	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/echo-swagger v1.1.4
@@ -40,6 +41,7 @@ require (
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/stretchr/objx v0.1.0 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
