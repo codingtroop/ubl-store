@@ -16,7 +16,7 @@ go install github.com/swaggo/swag/cmd/swag@latest
 
 10.000 Sample Invoice from 3 issuer
 
-|           | Size    | Compress Rate | Saving |f
+|           | Size    | Compress Rate | Saving |
 |-----------|---------:|------:|------:|
 | **Original**  | 2,443,6 MB | 100.0% |  0.0% |
 | **Zipped**   | 519.0 MB  | 21.0%  | 79.0% |
