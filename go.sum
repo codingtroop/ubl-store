@@ -54,8 +54,8 @@ github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdko
 github.com/agiledragon/gomonkey/v2 v2.3.1 h1:k+UnUY0EMNYUFUAQVETGY9uUTxjMdnUkP0ARyJS1zzs=
 github.com/agiledragon/gomonkey/v2 v2.3.1/go.mod h1:ap1AmDzcVOAz1YpeJ3TCzIgstoaWLA6jbbgxfB4w2iY=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
-github.com/antchfx/xmlquery v1.3.8 h1:dRnBQM3Vk5BVJFvFwsHOLAox+mEiNw5ZusaUNCrEdoU=
-github.com/antchfx/xmlquery v1.3.8/go.mod h1:wojC/BxjEkjJt6dPiAqUzoXO5nIMWtxHS8PD8TmN4ks=
+github.com/antchfx/xmlquery v1.3.10 h1:U2yMwr8U0KmGM2iDG2Ky/3LfxNsiK4uw1bSBkeMO9+g=
+github.com/antchfx/xmlquery v1.3.10/go.mod h1:wojC/BxjEkjJt6dPiAqUzoXO5nIMWtxHS8PD8TmN4ks=
 github.com/antchfx/xpath v1.2.0 h1:mbwv7co+x0RwgeGAOHdrKy89GvHaGvxxBtPK0uF9Zr8=
 github.com/antchfx/xpath v1.2.0/go.mod h1:i54GszH55fYfBmoZXapTHN8T8tkcHfRgLyVwwqzXNcs=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=

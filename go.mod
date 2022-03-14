@@ -3,7 +3,7 @@ module github.com/codingtroop/ubl-store
 go 1.17
 
 require (
-	github.com/antchfx/xmlquery v1.3.8
+	github.com/antchfx/xmlquery v1.3.10
 	github.com/aws/aws-sdk-go v1.42.13
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.6.1
