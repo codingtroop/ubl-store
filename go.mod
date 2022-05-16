@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/antchfx/xmlquery v1.3.8
-	github.com/aws/aws-sdk-go v1.42.13
+	github.com/aws/aws-sdk-go v1.44.15
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.6.1
 	github.com/pkg/errors v0.9.1
@@ -47,8 +47,8 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
-	golang.org/x/net v0.0.0-20211123203042-d83791d6bcd9 // indirect
-	golang.org/x/sys v0.0.0-20210910150752-751e447fb3d0 // indirect
+	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
+	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.5 // indirect
 	gopkg.in/ini.v1 v1.63.2 // indirect
