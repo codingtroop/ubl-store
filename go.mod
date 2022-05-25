@@ -3,7 +3,7 @@ module github.com/codingtroop/ubl-store
 go 1.17
 
 require (
-	github.com/antchfx/xmlquery v1.3.8
+	github.com/antchfx/xmlquery v1.3.11
 	github.com/aws/aws-sdk-go v1.42.13
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.6.1
@@ -18,7 +18,7 @@ require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
-	github.com/antchfx/xpath v1.2.0 // indirect
+	github.com/antchfx/xpath v1.2.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
