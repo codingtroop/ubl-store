@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/antchfx/xmlquery v1.3.8
-	github.com/aws/aws-sdk-go v1.44.214
+	github.com/aws/aws-sdk-go v1.55.7
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.9.0
 	github.com/pkg/errors v0.9.1
